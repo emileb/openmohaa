@@ -238,7 +238,12 @@ Sys_GetGameAPI
 void* Sys_GetGameAPI(void* parms)
 {
     void* (*GetGameAPI) (void*);
+
+#ifdef __ANDROID__
+    const char* gamename = "libmohaa_game";
+#else
     const char* gamename = "game" DLL_SUFFIX DLL_EXT;
+#endif
 
     if (game_library)
         Com_Error(ERR_FATAL, "Sys_GetGameAPI without calling Sys_UnloadGame");
@@ -287,7 +292,15 @@ Sys_GetCGameAPI
 void* Sys_GetCGameAPI(void* parms)
 {
     void* (*GetCGameAPI) (void*);
+<<<<<<< HEAD
     const char* gamename = "cgame" DLL_SUFFIX DLL_EXT;
+=======
+#ifdef __ANDROID__
+    const char* gamename = "libmohaa_cgame";
+#else
+    const char* gamename = "cgame" ARCH_SUFFIX DLL_SUFFIX DLL_EXT;
+#endif
+>>>>>>> 2aed1550 (Launches on Android)
 
     if (cgame_library)
         Com_Error(ERR_FATAL, "Sys_GetCGameAPI without calling Sys_UnloadCGame");

@@ -2040,11 +2040,13 @@ void CL_CheckForResend( void ) {
 #endif
 		CL_NET_OutOfBandPrint(clc.serverAddress, "getchallenge");
 		break;
+#ifndef __ANDROID__
 	case CA_AUTHORIZING:
 		// resend the cd key authorization
 		gcd_compute_response(cl_cdkey, Cmd_Argv(1), cls.gcdResponse, CDResponseMethod_REAUTH);
 		CL_NET_OutOfBandPrint(clc.serverAddress, "authorizeThis %s", cls.gcdResponse);
 		break;
+#endif
 	case CA_CHALLENGING:
 /*
 wombat: sending conect here: an example connect string from MOHAA looks like this:
@@ -2403,7 +2405,7 @@ void CL_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 		CL_NET_OutOfBandPrint(from, "%s", Cmd_Argv(1) );
 		return;
 	}
-
+#ifndef __ANDROID__
 	// cd check
 	if ( !Q_stricmp(c, "getKey") ) {
 		clc.state = CA_AUTHORIZING;
@@ -2411,7 +2413,7 @@ void CL_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 		CL_NET_OutOfBandPrint(from, "authorizeThis %s", cls.gcdResponse);
 		return;
 	}
-
+#endif
 	// global MOTD from id
 	if ( !Q_stricmp(c, "motd") ) {
 		CL_MotdPacket( from );

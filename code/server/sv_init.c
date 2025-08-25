@@ -461,7 +461,9 @@ void SV_Startup( void ) {
 	svs.initialized = qtrue;
 	memset( last_mapname, 0, sizeof( last_mapname ) );
 
+#ifndef __ANDROID__
 	SV_InitGamespy();
+#endif
 	Cvar_Set( "sv_running", "1" );
 	
 	// Join the ipv6 multicast group now that a map is running so clients can scan for us on the local network.
@@ -1190,7 +1192,9 @@ void SV_Shutdown( const char *finalmsg ) {
 	}
 
 	SV_RemoveOperatorCommands();
+#ifndef __ANDROID__
 	SV_ShutdownGamespy();
+#endif
 	SV_MasterShutdown();
 	SV_ShutdownGameProgs();
 

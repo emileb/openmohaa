@@ -20,7 +20,6 @@ PROJECT_FILES := \
 	qcommon/str.cpp \
 	script/scriptexception.cpp \
 	script/scriptvariable.cpp \
-    qcommon/puff.c \
     qcommon/q_math.c \
     qcommon/q_shared.c \
     qcommon/alias.c \

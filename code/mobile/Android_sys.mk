@@ -15,6 +15,8 @@ PROJECT_FILES := \
                 new/sys_unix_new.c \
                 con_tty.c \
                 sys_unix.c \
+                sys_update_checker.cpp \
+                sys_curl.c \
                 win_bounds.cpp \
                 win_localization.cpp \
 

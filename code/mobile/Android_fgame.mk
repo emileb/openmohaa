@@ -6,7 +6,11 @@ LOCAL_MODULE := mohaa_game
 
 LOCAL_CFLAGS := $(MOHAA_LOCAL_CFLAGS) -DGAME_DLL -DWITH_SCRIPT_ENGINE -DARCHIVE_SUPPORTED
 LOCAL_C_INCLUDES := $(MOHAA_LOCAL_C_INCLUDES) \
-                    $(LOCAL_PATH)/../script
+                    $(LOCAL_PATH)/../script \
+                    $(LOCAL_PATH)/../thirdparty/recastnavigation/DetourCrowd/Include \
+                    $(LOCAL_PATH)/../thirdparty/recastnavigation/Detour/Include \
+                    $(LOCAL_PATH)/../thirdparty/recastnavigation/Recast/Include \
+
 
 PROJECT_FILES := \
         ../parser/parsetree.cpp \
@@ -22,10 +26,15 @@ PROJECT_FILES := \
         ../qcommon/q_shared.c \
         ../qcommon/script.cpp \
         ../qcommon/str.cpp \
+        ../qcommon/delegate.cpp \
+
 
 ALL_FILES := $(wildcard $(LOCAL_PATH)/*.c $(LOCAL_PATH)/*.cpp)
 ALL_FILES += $(wildcard $(LOCAL_PATH)/../script/*.c*)
 ALL_FILES += $(wildcard $(LOCAL_PATH)/../parser/generated/*.c*)
+ALL_FILES += $(wildcard $(LOCAL_PATH)/../thirdparty/recastnavigation/DetourCrowd/Source/*.c*)
+ALL_FILES += $(wildcard $(LOCAL_PATH)/../thirdparty/recastnavigation/Detour/Source/*.c*)
+ALL_FILES += $(wildcard $(LOCAL_PATH)/../thirdparty/recastnavigation/Recast/Source/*.c*)
 
 
 ALL_FILES := $(ALL_FILES:$(LOCAL_PATH)/%=%)

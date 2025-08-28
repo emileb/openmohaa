@@ -6,13 +6,13 @@ LOCAL_MODULE := mohaa_refgl1
 
 LOCAL_CFLAGS := $(MOHAA_LOCAL_CFLAGS)
 LOCAL_C_INCLUDES := $(MOHAA_LOCAL_C_INCLUDES) \
-                     $(LOCAL_PATH)/../jpeg-8c/ \
+                     $(LOCAL_PATH)/../thirdparty/jpeg-9f/ \
 
 
 # All C files
 ALL_FILES := $(wildcard $(LOCAL_PATH)/*.c $(LOCAL_PATH)/*.cpp) # ALL files
 
-ALL_FILES += $(wildcard $(LOCAL_PATH)/../jpeg-8c/*.c) #
+ALL_FILES += $(wildcard $(LOCAL_PATH)/../thirdparty/jpeg-9f/*.c) #
 ALL_FILES += $(wildcard $(LOCAL_PATH)/../renderercommon/*.c) #
 
 
@@ -22,7 +22,7 @@ PROJECT_FILES := $(ALL_FILES)
 # Fix paths
 PROJECT_FILES := $(PROJECT_FILES:$(LOCAL_PATH)/%=%)
 
-PROJECT_FILES := $(filter-out tr_subs.c , $(PROJECT_FILES))
+PROJECT_FILES := $(filter-out ../renderercommon/tr_subs.c , $(PROJECT_FILES))
 
 LOCAL_SRC_FILES := $(PROJECT_FILES)
 

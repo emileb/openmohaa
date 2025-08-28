@@ -2016,8 +2016,9 @@ void Com_Init( char *commandLine ) {
 
     // Added in OPM
     //  Initialize GameSpy related stuff
+#ifndef __ANDROID__
     Com_InitGameSpy();
-
+#endif
 	iEnd = Sys_Milliseconds();
 	Com_Printf( "--- Common Initialization Complete --- %i ms\n", iEnd - iStart );
 }

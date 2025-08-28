@@ -9,6 +9,7 @@ LOCAL_C_INCLUDES := $(MOHAA_LOCAL_C_INCLUDES)
 
 PROJECT_FILES := \
         sdl_input.c \
+        sdl_mouse.c \
         sdl_gamma.c \
         sdl_glimp.c \
 

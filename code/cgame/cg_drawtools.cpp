@@ -1508,6 +1508,7 @@ CG_Draw2D
 */
 void CG_Draw2D(void)
 {
+    return;
     CG_UpdateCountdown();
     CG_DrawZoomOverlay();
     CG_DrawLagometer();

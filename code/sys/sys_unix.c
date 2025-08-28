@@ -80,6 +80,11 @@ char *Sys_DefaultHomePath(void)
 			else
 				Q_strcat(homePath, sizeof(homePath), HOMEPATH_NAME_MACOSX);
 		}
+#elif __ANDROID__
+        {
+			 p = getenv( "USER_FILES" );
+			 Com_sprintf(homePath, sizeof(homePath), "%s/mohaa", p);
+		};
 #else
 		if( ( p = getenv( "FLATPAK_ID" ) ) != NULL && *p != '\0' )
 		{

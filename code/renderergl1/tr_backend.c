@@ -45,6 +45,13 @@ void GL_SetFogColor(const vec4_t fColor) {
 	}
 }
 
+#ifdef __ANDROID__
+void GL_FixState()
+{
+	qglBindTexture (GL_TEXTURE_2D, glState.currenttextures[glState.currenttmu]);
+}
+#endif
+
 /*
 ** GL_Bind
 */
@@ -1428,9 +1435,10 @@ const void	*RB_SwapBuffers( const void *data ) {
 	if ( !glState.finishCalled ) {
 		qglFinish();
 	}
-
+#ifdef __ANDROID__
+    qglScissor( 0, 0, glConfig.vidWidth, glConfig.vidHeight);
+#endif
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
-
 	GLimp_EndFrame();
 
 	backEnd.in2D = qfalse;

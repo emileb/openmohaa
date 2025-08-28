@@ -57,12 +57,12 @@ cvar_t *r_preferOpenGLES;
 int qglMajorVersion, qglMinorVersion;
 int qglesMajorVersion, qglesMinorVersion;
 
-void (APIENTRYP qglActiveTextureARB) (GLenum texture);
-void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
-void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+void (APIENTRYP qglActiveTextureARB) (GLenum texture) = 0;
+void (APIENTRYP qglClientActiveTextureARB) (GLenum texture) = 0;
+void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t) = 0;
 
-void (APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count);
-void (APIENTRYP qglUnlockArraysEXT) (void);
+void (APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count) = 0;
+void (APIENTRYP qglUnlockArraysEXT) (void) = 0;
 
 #define GLE(ret, name, ...) name##proc * qgl##name = NULL;
 QGL_1_1_PROCS;
@@ -1093,7 +1093,11 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
 		qglMultiTexCoord2fARB = NULL;
 		qglActiveTextureARB = NULL;
 		qglClientActiveTextureARB = NULL;
-		if ( SDL_GL_ExtensionSupported( "GL_ARB_multitexture" ) )
+#ifdef __ANDROID__
+        if(1) // Force on, otherwise borken lights
+#else
+        if ( SDL_GL_ExtensionSupported( "GL_ARB_multitexture" ) )
+#endif
 		{
 			if ( r_ext_multitexture->value )
 			{

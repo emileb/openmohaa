@@ -1284,7 +1284,9 @@ void IN_Init( void *windowData )
 	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
 #endif
 
+#ifndef __ANDROID__
 	SDL_StartTextInput( );
+#endif
 
 	mouseAvailable = ( in_mouse->value != 0 );
 	IN_DeactivateMouse( Cvar_VariableIntegerValue( "r_fullscreen" ) != 0 );

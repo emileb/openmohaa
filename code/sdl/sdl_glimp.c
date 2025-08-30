@@ -451,78 +451,6 @@ static void GLimp_ClearProcAddresses( void ) {
 #undef GLE
 }
 
-#ifdef __ANDROID__
-extern int mobile_screen_width; // Device screen size in pix
-extern int mobile_screen_height;
-
-static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qboolean fixedFunction)
-{
-
-    Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-    glConfig.vidWidth = mobile_screen_width;
-    glConfig.vidHeight = mobile_screen_height;
-    glConfig.windowAspect = (float)glConfig.vidWidth / (float)glConfig.vidHeight;
-    flags |= SDL_WINDOW_FULLSCREEN;
-    glConfig.isFullscreen = qtrue;
-
-
-    if( ( SDL_window = SDL_CreateWindow( CLIENT_WINDOW_TITLE, 0, 0,
-                                         glConfig.vidWidth, glConfig.vidHeight, flags ) ) == NULL )
-    {
-        ri.Error( ERR_FATAL, "SDL_CreateWindow failed: %s\n", SDL_GetError( ) );
-    }
-
-    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
-    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );
-    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
-    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
-    SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 8 );
-
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
-    SDL_glContext = SDL_GL_CreateContext( SDL_window );
-    if ( !SDL_glContext )
-    {
-        ri.Error( ERR_FATAL, "SDL_GL_CreateContext() for context failed: %s\n", SDL_GetError() );
-        ri.Error (ERR_FATAL, "bad getprocaddress");
-    }
-
-
-    if ( !GLimp_GetProcAddresses( 1 ) )
-    {
-
-        GLimp_ClearProcAddresses();
-        SDL_GL_DeleteContext( SDL_glContext );
-        SDL_glContext = NULL;
-        ri.Error( ERR_FATAL, "GLimp_GetProcAddresses() for context failed\n" );
-    }
-    qglClearColor( 0, 0, 0, 1 );
-    qglClear( GL_COLOR_BUFFER_BIT );
-    SDL_GL_SwapWindow( SDL_window );
-
-    if( SDL_GL_SetSwapInterval( r_swapInterval->integer ) == -1 )
-    {
-        ri.Printf( PRINT_DEVELOPER, "SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError( ) );
-    }
-
-    SDL_GL_GetAttribute( SDL_GL_DEPTH_SIZE, &glConfig.depthBits );
-    SDL_GL_GetAttribute( SDL_GL_STENCIL_SIZE, &glConfig.stencilBits );
-
-    glConfig.colorBits = 24;
-
-    ri.Printf( PRINT_ALL, "Using %d color bits, %d depth, %d stencil display.\n",
-               glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
-
-
-    char * glstring = (char *) qglGetString (GL_RENDERER);
-    ri.Printf( PRINT_ALL, "GL_RENDERER: %s\n", glstring );
-
-    return RSERR_OK;
-}
-
-#else
 /*
 ===============
 GLimp_SetMode
@@ -874,11 +802,16 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 					             contexts[type].majorVersion, contexts[type].minorVersion );
 					break;
 			}
-
+#ifdef __ANDROID__
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#else
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, contexts[type].profileMask );
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, contexts[type].majorVersion );
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, contexts[type].minorVersion );
-
+#endif
+            
 			SDL_glContext = SDL_GL_CreateContext( SDL_window );
 			if ( !SDL_glContext )
 			{
@@ -958,7 +891,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 	return RSERR_OK;
 }
 
-#endif
 /*
 ===============
 GLimp_StartDriverAndSetMode

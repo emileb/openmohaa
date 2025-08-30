@@ -95,6 +95,8 @@ int mumble_link(const char* name)
 		return -1;
 	}
 #else
+
+#ifndef __ANDROID__
 	char file[256];
 	int shmfd;
 	if(lm)
@@ -113,6 +115,7 @@ int mumble_link(const char* name)
 		return -1;
 	}
 	close(shmfd);
+#endif
 #endif
 	memset(lm, 0, sizeof(LinkedMem));
 	mbstowcs(lm->name, name, sizeof(lm->name) / sizeof(wchar_t));

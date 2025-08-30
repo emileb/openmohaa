@@ -1391,6 +1391,10 @@ const void *RB_ClearDepth(const void *data)
 	return (const void *)(cmd + 1);
 }
 
+#ifdef __ANDROID__
+extern int mobile_screen_width; // Device screen size in pix
+extern int mobile_screen_height;
+#endif
 
 /*
 =============
@@ -1436,7 +1440,7 @@ const void	*RB_SwapBuffers( const void *data ) {
 		qglFinish();
 	}
 #ifdef __ANDROID__
-    qglScissor( 0, 0, glConfig.vidWidth, glConfig.vidHeight);
+    qglScissor( 0, 0, mobile_screen_width, mobile_screen_height);
 #endif
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
 	GLimp_EndFrame();

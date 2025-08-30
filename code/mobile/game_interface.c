@@ -96,11 +96,6 @@ void PortableAction(int state, int action)
 
             return;
         }
-        else if(action == PORT_ACT_CONSOLE)
-        {
-            if(state)
-                PortableCommand("toggleconsole");
-        }
         else if(action == PORT_ACT_MOUSE_LEFT || action == PORT_ACT_MOUSE_RIGHT)
         {
             int b = K_MOUSE1;
@@ -208,18 +203,18 @@ void PortableAction(int state, int action)
                     PortableCommand("weapprev\n");
                 break;
             case PORT_ACT_CONSOLE:
-                if(state)
-                    PortableCommand("toggleconsole");
+                PortableKeyEvent(state, SDL_SCANCODE_GRAVE, 0);
                 break;
-            case PORT_ACT_MP_SCORES:
+            case PORT_ACT_QUICKSAVE:
                 if(state)
-                {
-                    if(scoresShown)
-                        PortableCommand("-scores\n");
-                    else
-                        PortableCommand("+scores\n");
-                    scoresShown = !scoresShown;
-                }
+                    PortableCommand("savegame quick\n");
+                break;
+            case PORT_ACT_QUICKLOAD:
+                if(state)
+                    PortableCommand("loadgame quick\n");
+                break;
+            case PORT_ACT_DATAPAD:
+                PortableKeyEvent(state, SDL_SCANCODE_TAB, 0);
                 break;
         }
     }

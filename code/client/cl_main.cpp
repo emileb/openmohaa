@@ -1568,6 +1568,9 @@ void CL_ResetPureClientAtServer( void ) {
 }
 
 qboolean CL_Allowed_Vid_Restart() {
+#ifdef __ANDROID__ // Restarting video results in blank screen on Android, disable always
+    return qfalse;
+#endif
 	return clc.state == CA_DISCONNECTED || clc.state == CA_ACTIVE;
 }
 

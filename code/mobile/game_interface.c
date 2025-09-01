@@ -187,11 +187,7 @@ void PortableAction(int state, int action)
                 break;
             case PORT_ACT_DOWN:
             case PORT_ACT_TOGGLE_CROUCH:
-            {
-                static SmartToggle_t smartToggle;
-                int activate = SmartToggleAction(&smartToggle, state, KeyIsDown(&in_down));
-                (activate) ? KeyDownPort(&in_down) : KeyUpPort(&in_down);
-            }
+                (state) ? KeyDownPort(&in_down) : KeyUpPort(&in_down);
                 break;
                 //TODO make fifo, possibly not thread safe!!
             case PORT_ACT_NEXT_WEP:

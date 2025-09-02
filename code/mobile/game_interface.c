@@ -174,7 +174,7 @@ void PortableAction(int state, int action)
             case PORT_ACT_ATTACK:
                 (state) ? KeyDownPort(&in_buttons[0]) : KeyUpPort(&in_buttons[0]);
                 break;
-            case PORT_ACT_ALT_FIRE:
+            case PORT_ACT_ALT_ATTACK:
                 (state) ? KeyDownPort(&in_buttons[1]) : KeyUpPort(&in_buttons[1]);
                 break;
             case PORT_ACT_RELOAD:

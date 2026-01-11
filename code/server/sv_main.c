@@ -278,7 +278,8 @@ but not on every player enter or exit.
 ================
 */
 void SV_MasterHeartbeat( void ) {
-	if (!sv_gamespy->integer) {
+#ifndef __ANDROID__
+    if (!sv_gamespy->integer) {
 		return;
 	}
 
@@ -287,6 +288,7 @@ void SV_MasterHeartbeat( void ) {
 		svs.nextHeartbeatTime = svs.time + HB_TIME;
 		SV_GamespyHeartbeat();
 	}
+#endif
 }
 
 /*
@@ -780,7 +782,9 @@ void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 	} else if (!Q_stricmp(c, "connect")) {
 		SV_DirectConnect( from );
 	} else if (!Q_stricmp(c, "authorizeThis")) {
+#ifndef __ANDROID__
 		SV_GamespyAuthorize( from, Cmd_Argv(1) );
+#endif
 	} else if (!Q_stricmp(c, "rcon")) {
 		SVC_RemoteCommand( from, msg );
 	} else if (!Q_stricmp(c, "disconnect")) {
@@ -1156,8 +1160,10 @@ void SV_Frame( int msec ) {
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat();
 
+#ifndef __ANDROID__
 	// process all gamespy queries
 	SV_ProcessGamespyQueries();
+#endif
 
 	// Added in OPM
 	//  Handle non-pvs sounds

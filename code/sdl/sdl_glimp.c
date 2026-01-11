@@ -57,12 +57,12 @@ cvar_t *r_preferOpenGLES;
 int qglMajorVersion, qglMinorVersion;
 int qglesMajorVersion, qglesMinorVersion;
 
-void (APIENTRYP qglActiveTextureARB) (GLenum texture);
-void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
-void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+void (APIENTRYP qglActiveTextureARB) (GLenum texture) = 0;
+void (APIENTRYP qglClientActiveTextureARB) (GLenum texture) = 0;
+void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t) = 0;
 
-void (APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count);
-void (APIENTRYP qglUnlockArraysEXT) (void);
+void (APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count) = 0;
+void (APIENTRYP qglUnlockArraysEXT) (void) = 0;
 
 #define GLE(ret, name, ...) name##proc * qgl##name = NULL;
 QGL_1_1_PROCS;
@@ -252,6 +252,39 @@ static void APIENTRY GLimp_GLES_PolygonMode( GLenum face, GLenum mode ) {
 	// unsupported
 }
 
+
+#ifdef __ANDROID__
+#include <dlfcn.h>
+static void * GetProcAddress(const char* name)
+{
+	static void *glesLib = NULL;
+
+	if(!glesLib)
+	{
+		int flags = RTLD_LOCAL | RTLD_NOW;
+
+		glesLib = dlopen("libGL4ES.so", flags);
+	}
+
+	void * ret = NULL;
+	ret =  dlsym(glesLib, name);
+
+	if(!ret)
+	{
+		//LOGI("Failed to load: %s", name);
+	}
+	else
+	{
+		//LOGI("Loaded %s func OK", name);
+	}
+
+	return ret;
+}
+
+#define SDL_GL_GetProcAddress GetProcAddress
+
+#endif
+
 /*
 ===============
 GLimp_GetProcAddresses
@@ -263,6 +296,31 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
 	qboolean success = qtrue;
 	const char *version;
 
+
+#ifdef __ANDROID__
+    void initialize_gl4es( void );
+    initialize_gl4es();
+
+
+#define GLE( ret, name, ... ) qgl##name = (name##proc *) SDL_GL_GetProcAddress("gl" #name); \
+	if ( qgl##name == NULL ) { \
+		ri.Printf( PRINT_ALL, "ERROR: Missing OpenGL function %s\n", "gl" #name ); \
+		success = qfalse; \
+	}
+
+    GLE(const GLubyte *, GetString, GLenum name)
+
+
+
+
+    QGL_1_1_PROCS;
+    QGL_1_1_FIXED_FUNCTION_PROCS;
+    QGL_DESKTOP_1_1_PROCS;
+    QGL_DESKTOP_1_1_FIXED_FUNCTION_PROCS;
+
+    return qtrue;
+#endif
+
 #ifdef __SDL_NOGETPROCADDR__
 #define GLE( ret, name, ... ) qgl##name = gl#name;
 #else
@@ -272,6 +330,7 @@ static qboolean GLimp_GetProcAddresses( qboolean fixedFunction ) {
 		success = qfalse; \
 	}
 #endif
+
 
 	// OpenGL 1.0 and OpenGL ES 1.0
 	GLE(const GLubyte *, GetString, GLenum name)
@@ -711,11 +770,15 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 					             contexts[type].majorVersion, contexts[type].minorVersion );
 					break;
 			}
-
+#ifdef __ANDROID__
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#else
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, contexts[type].profileMask );
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, contexts[type].majorVersion );
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, contexts[type].minorVersion );
-
+#endif
 			if( ( SDL_window = SDL_CreateWindow( CLIENT_WINDOW_TITLE, x, y,
 					glConfig.vidWidth, glConfig.vidHeight, flags ) ) == NULL )
 			{
@@ -973,7 +1036,11 @@ static void GLimp_InitExtensions( qboolean fixedFunction )
 		qglMultiTexCoord2fARB = NULL;
 		qglActiveTextureARB = NULL;
 		qglClientActiveTextureARB = NULL;
-		if ( SDL_GL_ExtensionSupported( "GL_ARB_multitexture" ) )
+#ifdef __ANDROID__
+        if(1) // Force on, otherwise borken lights
+#else
+        if ( SDL_GL_ExtensionSupported( "GL_ARB_multitexture" ) )
+#endif
 		{
 			if ( r_ext_multitexture->value )
 			{

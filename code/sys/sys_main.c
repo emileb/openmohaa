@@ -441,9 +441,9 @@ void Sys_Error( const char *error, ... )
 	va_start (argptr,error);
 	Q_vsnprintf (string, sizeof(string), error, argptr);
 	va_end (argptr);
-
+#ifndef __ANDROID__
 	Sys_ErrorDialog( string );
-
+#endif
 	Sys_Exit( 3 );
 }
 
@@ -499,6 +499,9 @@ void Sys_UnloadDll( void *dllHandle )
 	Sys_UnloadLibrary(dllHandle);
 }
 
+#ifdef __ANDROID__
+extern const char *nativeLibsPath;
+#endif
 /*
 =================
 Sys_LoadDll
@@ -512,18 +515,37 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 {
 	void *dllhandle = NULL;
 
+#ifndef __ANDROID__
 	if(!Sys_DllExtension(name))
 	{
 		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
 		return NULL;
 	}
+#endif
 
 	if(useSystemLib)
 	{
 		Com_Printf("Trying to load \"%s\"...\n", name);
 		dllhandle = Sys_LoadLibrary(name);
 	}
-	
+
+#ifdef __ANDROID__
+    if(!dllhandle)
+	{
+        int len;
+        char libPath[MAX_OSPATH];
+        len = Com_sprintf(libPath, sizeof(libPath), "%s/%s.so", nativeLibsPath, name);
+        if(len < sizeof(libPath))
+        {
+            Com_Printf("Trying to load %s\n", libPath);
+            dllhandle = Sys_LoadLibrary(libPath);
+        }
+        else
+        {
+            //Com_Printf("Skipping trying to load \"%s\" from \"%s\", file name is too long.\n", name, topDir);
+        }
+    }
+#endif
 	if(!dllhandle)
 	{
 		const char *topDir;
@@ -779,7 +801,11 @@ void Sys_SigHandler( int signum )
 main
 =================
 */
+#ifdef __ANDROID__
+int main_android( int argc, char **argv )
+#else
 int main( int argc, char **argv )
+#endif
 {
 	int   i;
 	char  commandLine[ MAX_STRING_CHARS ] = { 0 };
@@ -879,11 +905,13 @@ int main( int argc, char **argv )
 	Sys_InitEx(); // Added in OPM
 	NET_Init( );
 
+#ifndef __ANDROID__
 	signal( SIGILL, Sys_SigHandler );
 	signal( SIGFPE, Sys_SigHandler );
 	signal( SIGSEGV, Sys_SigHandler );
 	signal( SIGTERM, Sys_SigHandler );
 	signal( SIGINT, Sys_SigHandler );
+#endif
 
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop( Com_Frame, 0, 1 );

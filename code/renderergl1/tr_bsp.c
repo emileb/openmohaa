@@ -2051,7 +2051,11 @@ void R_LoadLightGrid(gamelump_t* plPal, gamelump_t* plOffsets, gamelump_t* plDat
     }
     Com_Memcpy(w->lightGridPalette, plPal->buffer, sizeof(s_worldData.lightGridPalette));
 
+#ifdef __ANDROID__ // Spearhead crashes in tr_light trying to read off the end of the array, maybe error in data. Make slightly larger
+    w->lightGridData = ri.Hunk_Alloc(plData->length + 512, h_dontcare);
+#else
     w->lightGridData = ri.Hunk_Alloc(plData->length, h_dontcare);
+#endif
     Com_Memcpy(w->lightGridData, plData->buffer, plData->length);
 }
 

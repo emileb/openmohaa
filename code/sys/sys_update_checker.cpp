@@ -147,6 +147,9 @@ void UpdateChecker::Shutdown()
 
 bool UpdateChecker::CheckNewVersion() const
 {
+#ifdef __ANDROID__
+    return false;
+#else
     if (!versionChecked) {
         return false;
     }
@@ -168,6 +171,7 @@ bool UpdateChecker::CheckNewVersion() const
     }
 
     return false;
+#endif
 }
 
 bool UpdateChecker::CheckNewVersion(int& major, int& minor, int& patch) const

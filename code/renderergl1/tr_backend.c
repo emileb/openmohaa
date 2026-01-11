@@ -45,6 +45,13 @@ void GL_SetFogColor(const vec4_t fColor) {
 	}
 }
 
+#ifdef __ANDROID__
+void GL_FixState()
+{
+	qglBindTexture (GL_TEXTURE_2D, glState.currenttextures[glState.currenttmu]);
+}
+#endif
+
 /*
 ** GL_Bind
 */
@@ -1384,6 +1391,10 @@ const void *RB_ClearDepth(const void *data)
 	return (const void *)(cmd + 1);
 }
 
+#ifdef __ANDROID__
+extern int mobile_screen_width; // Device screen size in pix
+extern int mobile_screen_height;
+#endif
 
 /*
 =============
@@ -1428,9 +1439,10 @@ const void	*RB_SwapBuffers( const void *data ) {
 	if ( !glState.finishCalled ) {
 		qglFinish();
 	}
-
+#ifdef __ANDROID__
+    qglScissor( 0, 0, mobile_screen_width, mobile_screen_height);
+#endif
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
-
 	GLimp_EndFrame();
 
 	backEnd.in2D = qfalse;

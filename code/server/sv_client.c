@@ -300,7 +300,9 @@ challenge_t* FindChallenge(netadr_t from, qboolean connecting) {
 
 		g_gamespyId = (g_gamespyId + 1) % MAX_GAMESPY_IDS;
 		challenge->gamespyId = g_gamespyId;
+#ifndef __ANDROID__
 		SV_CreateGamespyChallenge(challenge->gsChallenge);
+#endif
 	}
 
 	// always generate a new challenge number, so the client cannot circumvent sv_maxping
@@ -805,9 +807,10 @@ void SV_DropClient( client_t *drop, const char *reason ) {
 	if ( i == sv_maxclients->integer ) {
 		SV_Heartbeat_f();
 	}
-
+#ifndef __ANDROID__
 	// Added in 2.0
 	SV_GamespyClientDisconnect(drop->gamespyId);
+#endif
 }
 
 /*

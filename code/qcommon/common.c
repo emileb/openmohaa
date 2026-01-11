@@ -217,6 +217,10 @@ void Com_EndRedirect (void)
 
 #ifndef _COM_NOPRINTF
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "OMOHAA", __VA_ARGS__))
+#endif
 /*
 =============
 Com_Printf
@@ -241,6 +245,10 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 	va_start (argptr,fmt);
 	Q_vsnprintf (msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
+
+#ifdef __ANDROID__
+    LOGI("%s", msg);
+#endif
 
 	if ( rd_buffer ) {
 		if ((strlen (msg) + strlen(rd_buffer)) > (rd_buffersize - 1)) {
@@ -1968,10 +1976,11 @@ void Com_Init( char *commandLine ) {
 
 	Sys_Init();
 
+#ifndef __ANDROID__
 #ifdef NDEBUG
-	Sys_InitPIDFile(FS_GetCurrentGameDir());
+	Sys_InitPIDFile(FS_GetCurrentGameDir()); // LOACK UP ON Sys_Dialog
 #endif
-
+#endif
 	// Pick a random port value
 	Com_RandomBytes((byte*)&qport, sizeof(int));
 	Netchan_Init(qport & 0xffff);
@@ -2019,8 +2028,9 @@ void Com_Init( char *commandLine ) {
 
     // Added in OPM
     //  Initialize GameSpy related stuff
+#ifndef __ANDROID__
     Com_InitGameSpy();
-
+#endif
 	iEnd = Sys_Milliseconds();
 	Com_Printf( "--- Common Initialization Complete --- %i ms\n", iEnd - iStart );
 }
@@ -2412,6 +2422,12 @@ void Com_Frame( void ) {
 	if ( com_speeds->integer ) {
 		timeBeforeEvents = Sys_Milliseconds ();
 	}
+
+#ifdef __ANDROID__
+    void IN_Android_Commands();
+    IN_Android_Commands();
+#endif
+
 	Com_EventLoop();
 	if (CL_FinishedIntro()) {
 		Cbuf_Execute(msec);

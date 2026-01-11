@@ -62,7 +62,7 @@ LOCAL_SRC_FILES +=  ../mobile/game_interface.c \
 
 LOCAL_LDLIBS := -lEGL -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng logwritter SDL2_net mohaa_sdl mohaa_syslib mohaa_server mohaa_skeletor mohaa_refgl1 mohaa_tiki mad
-LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer core_shared saffal openal GL4ES
+LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer saffal openal GL4ES
 
 
 include $(BUILD_SHARED_LIBRARY)

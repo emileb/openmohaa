@@ -132,7 +132,7 @@ static char *Sys_DefaultHomePath(void)
 #ifdef __ANDROID__
 
       p = getenv( "USER_FILES" );
-      Com_sprintf(homePath, sizeof(homePath), "%s/mohaa", p);
+      Com_sprintf(homePath, sizeof(homePath), "%s/mohaa_dev", p);
 
 #else
 		if( ( p = getenv( "HOME" ) ) != NULL )

@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := mohaa_dev
 
-MOHAA_LOCAL_CFLAGS := -O2 -g -DAPP_MODULE -DUSE_CODEC_MP3 -DMOHAA -DENGINE_NAME=\"openmohaa\" -Werror=return-type -Wno-pointer-bool-conversion -fsigned-char -fexceptions
+MOHAA_LOCAL_CFLAGS := -O2 -g -DAPP_MODULE -DUSE_CODEC_MAD -DMOHAA -DENGINE_NAME=\"openmohaa\" -Werror=return-type -Wno-pointer-bool-conversion -fsigned-char -fexceptions
 
 
 MOHAA_LOCAL_C_INCLUDES := $(SDL_INCLUDE_PATHS)  \

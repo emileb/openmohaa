@@ -16,7 +16,7 @@ MOHAA_LOCAL_C_INCLUDES := $(SDL_INCLUDE_PATHS)  \
                          $(TOP_DIR)/Clibs_OpenTouch/alpha \
                          $(LOCAL_PATH)/../qcommon \
                          $(LOCAL_PATH)/../mobile \
-                         $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/ \
+                         $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/ \
                          $(TOP_DIR)/AudioLibs_OpenTouch/libmad/ \
 
 
@@ -62,7 +62,7 @@ LOCAL_SRC_FILES +=  ../mobile/game_interface.c \
 
 LOCAL_LDLIBS := -lEGL -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng logwritter SDL2_net mohaa_sdl_dev mohaa_syslib_dev mohaa_server_dev mohaa_skeletor_dev mohaa_refgl1_dev mohaa_tiki_dev mad
-LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer saffal openal GL4ES
+LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer saffal openal-soft GL4ES
 
 
 include $(BUILD_SHARED_LIBRARY)

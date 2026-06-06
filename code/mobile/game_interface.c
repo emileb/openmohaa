@@ -180,6 +180,9 @@ void PortableAction(int state, int action)
             case PORT_ACT_RELOAD:
                 PortableCommand("reload\n");
                 break;
+            case PORT_ACT_HOLSTER_WEAPON:
+                PortableCommand("holster\n");
+                break;
             case PORT_ACT_JUMP:
                 //Jump is same as up
             case PORT_ACT_UP:
